@@ -61,7 +61,7 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
         }
         else
         {
-            pump.Amount = pump.StopCharging(pump.Id);
+            pump.Amount = pump.StopCharging();
             AddToLog(pump);
             SetAsBlocked(id);           
         }
@@ -85,7 +85,7 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
         }
         else
         {
-            pump.StartCharging(pump.Id);
+            pump.StartCharging();
         }
         return result;
 

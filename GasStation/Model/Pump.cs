@@ -17,8 +17,7 @@ public class Pump : IPump
     /// Comienza la carga de un vehiculo, el estado del surtidor debe ser Libre
     /// Se debe indicar el número del surtidor
     /// </summary>
-    /// <param name="pumpId"></param>
-    public void StartCharging(int pumpId)
+    public void StartCharging()
     {
         Status = PUMP_STATUS.CHARGING;
         _watcher.Start();
@@ -28,7 +27,7 @@ public class Pump : IPump
             System.Timers.Timer runonce = new(milliseconds.Value);
             runonce.Elapsed += (s, e) =>
             {
-                Amount = StopCharging(pumpId);
+                Amount = StopCharging();
             };
             runonce.AutoReset = false;
             runonce.Start();
@@ -40,10 +39,9 @@ public class Pump : IPump
     /// La carga se debe detener si no fue indicado un monto predefinido, en caso contrario se dentra automaticamente
     /// Se debe indicar el número del surtidor
     /// </summary>
-    /// <param name="pumpId"></param>
     /// <returns>El valor en euros que se cargo en combustible</returns>
 
-    public double StopCharging(int pumpId)
+    public double StopCharging()
     {
         var response = _watcher.ElapsedMilliseconds * LibraryConstants.FUEL_PRICE_PER_MILISECOND;
         _watcher.Stop();
