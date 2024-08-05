@@ -124,7 +124,7 @@ void NewAction() {
         response = Console.ReadLine();
     }
 
-    a = response == "Si" ? 0 : 9;
+    a = response == "Si" ? 0 : 8;
 }
 
 void ShowPumpStatus()
