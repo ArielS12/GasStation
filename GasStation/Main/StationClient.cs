@@ -15,14 +15,13 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
 {
     private IEnumerable<Pump> _pumps = pumps;
     private readonly PumpHistoryLogger _logger = new();
-    private PumpClient _pumpClient = new PumpClient(pumps);
-    
+
     /// <summary>
     /// Realiza las acciones que modifican el estado de un surtidor
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="newState"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <param name="newState">nuevo estado del surtidor</param>
+    /// <returns>Si la accion se pudo realizar correctamente o no</returns>
     public PumpActionResult DoPumpAction(int id, PUMP_ACTION newState)
     {
         var result = new PumpActionResult();
@@ -48,8 +47,8 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
     /// Cambie el estado del surtidor de Cargando a Bloqueado y
     /// crea un log con los datos de la ultima carga
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <returns>Si la accion se pudo realizar correctamente o no</returns>
     private PumpActionResult StopCharging(int id) 
     {
         var result = new PumpActionResult();
@@ -62,18 +61,18 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
         }
         else
         {
-            pump.Amount = _pumpClient.StopCharging(pump.Id);
+            pump.Amount = pump.StopCharging(pump.Id);
             AddToLog(pump);
             SetAsBlocked(id);           
         }
         return result;
-    } 
+    }
 
     /// <summary>
     /// Cambia el estado del surtidor de Libre a Cargando
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <returns>Si la accion se pudo realizar correctamente o no</returns>
     private PumpActionResult StartCharging(int id)
     {
         var result = new PumpActionResult();
@@ -86,7 +85,7 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
         }
         else
         {
-            _pumpClient.StartCharging(pump.Id);
+            pump.StartCharging(pump.Id);
         }
         return result;
 
@@ -96,7 +95,7 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
     /// <summary>
     /// Crea un nuevo registro de una carga
     /// </summary>
-    /// <param name="pump"></param>
+    /// <param name="pump">Datos del surtidor</param>
     private void AddToLog(Pump pump) {
         var supply = new Supply
         {
@@ -112,8 +111,8 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
     /// <summary>
     /// Cambia el estado de bloqueado a Libre
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <returns>Si la accion se pudo realizar correctamente o no</returns>
     private PumpActionResult SetAsFree(int id)
     {
         var result = new PumpActionResult();
@@ -136,9 +135,9 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
     /// Agrega un monton predefinido al surtidor, para hacer esta accion
     /// el estado del surtidor debe ser Bloqueado
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="amount"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <param name="amount">Monto en euros que se van a cargar</param>
+    /// <returns>Si la accion se pudo realizar correctamente o no</returns>
     public PumpActionResult SetPredefinedAmount(int id, double amount)
     {
         var result = new PumpActionResult();
@@ -159,8 +158,8 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
     /// <summary>
     /// Cambia el estado del surtidor a Bloqueado
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <returns>Si la accion se pudo realizar correctamente o no</returns>
     private PumpActionResult SetAsBlocked(int id)
     {
         var result = new PumpActionResult();
@@ -175,16 +174,16 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
 
 
     /// <summary>
-    /// Devuelve el listado de los registros que hubo en todos los suridores
+    ///
     /// </summary>
-    /// <returns></returns>
+    /// <returns>La lista de los registros de carga</returns>
     public IEnumerable<Supply> GetLog() => _logger.GetLog();
 
     /// <summary>
     /// Devuelve la información de un surtidor
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Número de surtidor</param>
+    /// <returns>La informacion de un surtidor</returns>
     /// <exception cref="Exception"></exception>
     private Pump GetPump(int id) => _pumps.FirstOrDefault(p => p.Id.Equals(id))
          ?? throw new Exception("Pump doesn't exist");
@@ -193,6 +192,6 @@ public class StationClient(IEnumerable<Pump> pumps) : IStationClient
     /// <summary>
     /// Devuelve el estado de todos los surtidores
     /// </summary>
-    /// <returns></returns>
+    /// <returns>El estado de todos los surtidores</returns>
     public IEnumerable<PUMP_STATUS> GetPumpsStates() => _pumps.Select(p => p.Status);
 }

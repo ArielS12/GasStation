@@ -6,7 +6,7 @@ int s;
 var pumpNumber = int.TryParse(Console.ReadLine(), out s);
 
 var pumps = new List<Pump>();
-for (int p = 0; p < s; p++)
+for (int p = 1; p <= s; p++)
 {
     pumps.Add(new Pump
     {
@@ -141,7 +141,7 @@ void PumpAction(PUMP_ACTION action) {
     Console.WriteLine(ActionToString(action));
     var pumpIsValid = int.TryParse(Console.ReadLine(), out p);
 
-    while (!pumpIsValid || p <= 0 || p >= pumps.Count())
+    while (!pumpIsValid || p < 1 || p > pumps.Count())
     {
         Console.WriteLine("El número de surtidor no existe. Ingrese un número de surtidor valido");
         accion = int.TryParse(Console.ReadLine(), out p);
